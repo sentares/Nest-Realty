@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsPositive, Length, Matches } from 'class-validator';
+import { IUser } from 'src/user/interface';
 
 export class CreatePostDto {
   @ApiProperty({ example: 'Good House' })
@@ -24,7 +25,4 @@ export class CreatePostDto {
   @IsNumber({ allowInfinity: false, allowNaN: false })
   @IsPositive()
   price: number;
-
-  @ApiProperty({ example: '64c3eeb87984df7cca567311' })
-  id_user: string;
 }

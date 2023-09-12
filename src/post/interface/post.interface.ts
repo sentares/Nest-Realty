@@ -7,5 +7,4 @@ export interface IPost {
   type: IType;
   category: ICategory;
   price: number;
-  id_user: string;
 }

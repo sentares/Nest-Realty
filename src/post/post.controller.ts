@@ -1,8 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { PostService } from './post.service';
-import { IPost } from './interface';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/guard';
 import { CreatePostDto } from './dto';
-import { ApiTags } from '@nestjs/swagger';
+import { IPost } from './interface';
+import { PostService } from './post.service';
+import { CurrentUser } from 'src/auth/decorator';
+import { IUser } from 'src/user/interface';
 
 @ApiTags('Post')
 @Controller('post')
@@ -15,7 +18,12 @@ export class PostController {
   }
 
   @Post()
-  async create(@Body() data: CreatePostDto): Promise<IPost> {
-    return await this.service.create(data);
+  @ApiSecurity('bearer')
+  @UseGuards(AuthGuard)
+  async create(
+    @Body() data: CreatePostDto,
+    @CurrentUser() user: IUser,
+  ): Promise<IPost> {
+    return await this.service.create(data, user);
   }
 }

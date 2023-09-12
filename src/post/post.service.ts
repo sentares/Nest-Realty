@@ -6,6 +6,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { IPost } from './interface';
 import { PostModel } from './model';
 import { CategoryService } from 'src/category/category.service';
+import { IUser } from 'src/user/interface';
 
 @Injectable()
 export class PostService {
@@ -19,8 +20,8 @@ export class PostService {
     return await this.postModel.find().populate('type category');
   }
 
-  async create(data: CreatePostDto): Promise<IPost> {
-    const { title, typeId, categoryId, price, id_user } = data;
+  async create(data: CreatePostDto, user: IUser): Promise<IPost> {
+    const { title, typeId, categoryId, price } = data;
     const type = await this.typeService.getOne(typeId);
     const category = await this.categoryService.getOne(categoryId);
 
@@ -29,7 +30,7 @@ export class PostService {
       type,
       price,
       category,
-      id_user,
+      user,
     });
     return await newPost.save();
   }
