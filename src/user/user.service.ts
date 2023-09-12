@@ -7,10 +7,9 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
-import * as fs from 'fs';
-import { UserModel } from './model';
+import { CreateUserDto } from './dto';
 import { IUser } from './interface';
-import { CreateUserDto, UploadAvatarDto } from './dto';
+import { UserModel } from './model';
 
 @Injectable()
 export class UserService {
@@ -25,6 +24,14 @@ export class UserService {
 
   async findById(id: string): Promise<IUser> {
     const user = await this.userModel.findById(id);
+    if (!user) {
+      throw new NotFoundException('User in not defined');
+    }
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<IUser> {
+    const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new NotFoundException('User is not defined');
     }
@@ -52,38 +59,5 @@ export class UserService {
       password: hashedPassword,
     });
     return await newUser.save();
-  }
-
-  async uploadAvatarBase64(id: string, data: UploadAvatarDto): Promise<IUser> {
-    const { extension, image } = data;
-    const user = await this.findById(id);
-    const avatarUrl = `${Date.now() + Math.random()}.${extension}`;
-
-    if (user.avatar) {
-      fs.unlink(`./avatars/${user.avatar}`, (err) =>
-        err ? console.log(err) : null,
-      );
-    }
-    fs.writeFileSync(`./avatars/${avatarUrl}`, image, { encoding: 'base64' });
-
-    user.avatar = avatarUrl;
-
-    return user.save();
-  }
-
-  async uploadAvatarFile(
-    id: string,
-    image: Express.Multer.File,
-  ): Promise<IUser> {
-    const user = await this.findById(id);
-
-    if (user.avatar) {
-      fs.unlink(`./avatars/${user.avatar}`, (err) =>
-        err ? console.log(err) : null,
-      );
-    }
-    user.avatar = image.filename;
-
-    return user.save();
   }
 }

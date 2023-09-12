@@ -1,19 +1,8 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { GetByIdParam } from 'src/utils';
-import { UserService } from './user.service';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from './dto';
 import { IUser } from './interface';
-import { CreateUserDto, UploadAvatarDto } from './dto';
+import { UserService } from './user.service';
 
 @ApiTags('User')
 @Controller('user')
@@ -28,23 +17,5 @@ export class UserController {
   @Post()
   async create(@Body() data: CreateUserDto): Promise<IUser> {
     return await this.userService.create(data);
-  }
-
-  @Put('/base64/:id')
-  async uploadAvatarBase64(
-    @Param() { id }: GetByIdParam,
-    @Body() data: UploadAvatarDto,
-  ): Promise<IUser> {
-    return await this.userService.uploadAvatarBase64(id, data);
-  }
-
-  @Put('/file/:id')
-  @UseInterceptors(FileInterceptor('image'))
-  @ApiConsumes('multipart/form-data')
-  async uploadAvatarFile(
-    @Param() { id }: GetByIdParam,
-    @UploadedFile() image: Express.Multer.File,
-  ): Promise<IUser> {
-    return await this.userService.uploadAvatarFile(id, image);
   }
 }

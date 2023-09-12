@@ -14,9 +14,6 @@ export class UserModel implements IUser {
 
   @Prop()
   password: string;
-
-  @Prop()
-  avatar: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);

@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import * as path from 'path';
-import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { CategoryModule } from './category/category.module';
 import { PostModule } from './post/post.module';
 import { TypeModule } from './type/type.module';
-import { CategoryModule } from './category/category.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,13 +17,11 @@ import { CategoryModule } from './category/category.module';
         uri: config.get<string>('MONGODB_URI'),
       }),
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: path.join(__dirname, '../avatars'),
-    // }),
     UserModule,
     PostModule,
     TypeModule,
     CategoryModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
