@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { TypeModel } from 'src/type/model';
 import { IPost } from '../interface';
 import mongoose from 'mongoose';
+import { CategoryModel } from 'src/category/model';
 
 @Schema()
 export class PostModel implements IPost {
@@ -16,6 +17,9 @@ export class PostModel implements IPost {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'TypeModel' })
   type: TypeModel;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'CategoryModel' })
+  category: CategoryModel;
 
   @Prop()
   id_user: string;

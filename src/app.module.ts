@@ -6,6 +6,7 @@ import * as path from 'path';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { TypeModule } from './type/type.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TypeModule } from './type/type.module';
     UserModule,
     PostModule,
     TypeModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}
