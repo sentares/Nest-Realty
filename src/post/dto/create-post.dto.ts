@@ -1,14 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsPositive, Length } from 'class-validator';
-import { PostType } from '../enum';
+import { IsNumber, IsPositive, Length, Matches } from 'class-validator';
 
 export class CreatePostDto {
   @ApiProperty({ example: 'Good House' })
   @Length(10, 200)
   title: string;
 
-  @ApiProperty({ example: PostType.SALE })
-  typeId: PostType;
+  @ApiProperty({ example: '64c3eeb87984df7cca567306' })
+  @Length(24, 24)
+  @Matches(/^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/, {
+    message: 'Invalid ID',
+  })
+  typeId: string;
 
   @ApiProperty({ example: 100000 })
   @IsNumber({ allowInfinity: false, allowNaN: false })

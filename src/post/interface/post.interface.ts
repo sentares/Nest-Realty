@@ -1,9 +1,9 @@
-import { PostType } from '../enum';
+import { IType } from 'src/type/interface';
 
 export interface IPost {
   id: string;
   title: string;
-  type: PostType;
+  type: IType;
   price: number;
   id_user: string;
 }

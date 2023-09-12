@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { TypeModel } from 'src/type/model';
 import { IPost } from '../interface';
-import { PostType } from '../enum';
+import mongoose from 'mongoose';
 
 @Schema()
 export class PostModel implements IPost {
@@ -13,8 +14,8 @@ export class PostModel implements IPost {
   @Prop()
   price: number;
 
-  @Prop()
-  type: PostType;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'TypeModel' })
+  type: TypeModel;
 
   @Prop()
   id_user: string;

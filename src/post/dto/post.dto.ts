@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IPost } from '../interface';
+import { IType } from 'src/type/interface';
 import { PostType } from '../enum';
+import { IPost } from '../interface';
 
 export class PostDto implements IPost {
   @ApiProperty({ example: '64c3eeb87984df7cca567306' })
@@ -10,7 +11,7 @@ export class PostDto implements IPost {
   title: string;
 
   @ApiProperty({ example: PostType.SALE })
-  type: PostType;
+  type: IType;
 
   @ApiProperty({ example: 100000 })
   price: number;
