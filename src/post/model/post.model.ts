@@ -24,6 +24,9 @@ export class PostModel implements IPost {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserModel' })
   user: UserModel;
+
+  @Prop([String])
+  images: string[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(PostModel);

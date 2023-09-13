@@ -6,6 +6,8 @@ import { CategoryModule } from './category/category.module';
 import { PostModule } from './post/post.module';
 import { TypeModule } from './type/type.module';
 import { UserModule } from './user/user.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import path from 'path';
 
 @Module({
   imports: [
@@ -17,6 +19,9 @@ import { UserModule } from './user/user.module';
         uri: config.get<string>('MONGODB_URI'),
       }),
     }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: path.join(__dirname, '../images'),
+    // }),
     UserModule,
     PostModule,
     TypeModule,

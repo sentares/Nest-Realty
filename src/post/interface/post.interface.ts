@@ -7,4 +7,7 @@ export interface IPost {
   type: IType;
   category: ICategory;
   price: number;
+  images?: string[];
+
+  save?();
 }

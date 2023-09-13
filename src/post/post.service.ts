@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CategoryService } from 'src/category/category.service';
@@ -7,6 +7,7 @@ import { IUser } from 'src/user/interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { IPost } from './interface';
 import { PostModel } from './model';
+import * as fs from 'fs';
 
 @Injectable()
 export class PostService {
@@ -22,6 +23,14 @@ export class PostService {
     return await this.postModel.find().populate('type').populate('category');
   }
 
+  async getOne(id: string): Promise<IPost> {
+    const post = await this.postModel.findById(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+    return (await post.populate('type')).populate('category');
+  }
+
   async getMine(user: IUser): Promise<IPost[]> {
     return await this.postModel
       .find({ user })
@@ -30,7 +39,7 @@ export class PostService {
   }
 
   async create(data: CreatePostDto, user: IUser): Promise<IPost> {
-    const { title, typeId, categoryId, price } = data;
+    const { title, typeId, categoryId, price, images } = data;
     const type = await this.typeService.getOne(typeId);
     const category = await this.categoryService.getOne(categoryId);
 
@@ -41,6 +50,21 @@ export class PostService {
       category,
       user,
     });
-    return await newPost.save();
+
+    const createdPost = await newPost.save();
+
+    // const postId = createdPost.id;
+    // const uploadPath = `./images/${postId}`;
+
+    createdPost.images = images;
+    await createdPost.save();
+
+    return createdPost;
+  }
+
+  async postImage(image: Express.Multer.File) {
+    console.log(image);
+
+    return image;
   }
 }

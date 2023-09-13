@@ -23,4 +23,7 @@ export class PostDto implements IPost {
 
   @ApiProperty({ example: '64c3eeb87984df7cca567311' })
   id_user: string;
+
+  @ApiProperty({ example: ['url1', 'url2', 'url3'] })
+  images?: string[];
 }

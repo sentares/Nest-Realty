@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsPositive, Length, Matches } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsNumber,
+  IsPositive,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export class CreatePostDto {
   @ApiProperty({ example: 'Good House' })
@@ -24,4 +31,10 @@ export class CreatePostDto {
   @IsNumber({ allowInfinity: false, allowNaN: false })
   @IsPositive()
   price: number;
+
+  @ApiProperty({ example: ['url1', 'url2', 'url3'] })
+  @Length(2, 200, { each: true })
+  @ArrayMinSize(2)
+  @ArrayMaxSize(8)
+  images?: string[];
 }
