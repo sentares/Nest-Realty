@@ -28,13 +28,13 @@ export class CreatePostDto {
   categoryId: string;
 
   @ApiProperty({ example: 100000 })
-  @IsNumber({ allowInfinity: false, allowNaN: false })
-  @IsPositive()
+  // @IsNumber({ allowInfinity: false, allowNaN: false })
+  // @IsPositive()
   price: number;
 
   @ApiProperty({ example: ['url1', 'url2', 'url3'] })
-  @Length(2, 200, { each: true })
-  @ArrayMinSize(2)
-  @ArrayMaxSize(8)
+  // @Length(2, 200, { each: true })
+  // @ArrayMinSize(2)
+  // @ArrayMaxSize(8)
   images?: string[];
 }

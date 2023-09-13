@@ -42,6 +42,7 @@ export class PostService {
     const { title, typeId, categoryId, price, images } = data;
     const type = await this.typeService.getOne(typeId);
     const category = await this.categoryService.getOne(categoryId);
+    console.log(data, 'from service');
 
     const newPost = new this.postModel({
       title: title || type.title,

@@ -4,12 +4,13 @@ import {
   Get,
   Param,
   Post,
+  UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/auth/decorator';
 import { AuthGuard } from 'src/auth/guard';
 import { IUser } from 'src/user/interface';
@@ -43,11 +44,15 @@ export class PostController {
   @ApiSecurity('bearer')
   @UseGuards(AuthGuard)
   @UseInterceptors(FilesInterceptor('images', 10))
+  @ApiConsumes('multipart/form-data')
   async create(
     @Body() data: CreatePostDto,
     @CurrentUser() user: IUser,
+    @UploadedFiles() images: Express.Multer.File[],
   ): Promise<IPost> {
-    console.log(data, 'from controller');
+    console.log(images, 'images');
+
+    // console.log(data, 'from controller');
 
     return await this.service.create(data, user);
   }
