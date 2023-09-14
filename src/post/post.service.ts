@@ -12,9 +12,9 @@ import * as path from 'path';
 import { CategoryService } from 'src/category/category.service';
 import { TypeService } from 'src/type/type.service';
 import { IUser } from 'src/user/interface';
-import { CreatePostDto } from './dto/create-post.dto';
 import { IPost } from './interface';
 import { PostModel } from './model';
+import { UpdatePostDto, CreatePostDto } from './dto';
 
 @Injectable()
 export class PostService {
@@ -100,5 +100,44 @@ export class PostService {
 
     Logger.log('Post deleted', PostService.name);
     return 'Post deleted successfully';
+  }
+
+  async updatePost(
+    id: string,
+    user: IUser,
+    data: UpdatePostDto,
+    images: Express.Multer.File[],
+  ) {
+    const { title, typeId, categoryId, price, bedrooms, bathrooms } = data;
+    const type = await this.typeService.getOne(typeId);
+    const category = await this.categoryService.getOne(categoryId);
+
+    const post = await this.postModel.findById(id);
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (user._id.toString() !== post.user.toString()) {
+      throw new UnauthorizedException(
+        'You do not have permission to update this post',
+      );
+    }
+
+    title && (post.title = title || type.title);
+    type && (post.type = type);
+    category && (post.category = category);
+    price && (post.price = Number(price));
+    bedrooms && (post.bedrooms = Number(bedrooms));
+    bathrooms && (post.bathrooms = Number(bathrooms));
+
+    if (images && images.length > 0) {
+      const imagePaths = images.map((image) => image.filename);
+      post.images = imagePaths;
+    }
+
+    await post.save();
+
+    return post;
   }
 }

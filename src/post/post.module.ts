@@ -8,6 +8,7 @@ import { PostController } from './post.controller';
 import { PostService } from './post.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { diskStorage } from 'multer';
     forwardRef(() => AuthModule),
     forwardRef(() => TypeModule),
     forwardRef(() => CategoryModule),
+    forwardRef(() => UserModule),
   ],
   controllers: [PostController],
   providers: [PostService],

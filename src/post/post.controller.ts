@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -14,7 +15,7 @@ import { ApiConsumes, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from 'src/auth/decorator';
 import { AuthGuard } from 'src/auth/guard';
 import { IUser } from 'src/user/interface';
-import { CreatePostDto } from './dto';
+import { CreatePostDto, UpdatePostDto } from './dto';
 import { IPost } from './interface';
 import { PostService } from './post.service';
 
@@ -28,16 +29,16 @@ export class PostController {
     return await this.service.getAll();
   }
 
-  @Get('/:id')
-  async getOne(@Param('id') id: string): Promise<IPost> {
-    return await this.service.getOne(id);
-  }
-
-  @Get('/mine')
+  @Get('mine')
   @ApiSecurity('bearer')
   @UseGuards(AuthGuard)
   async getMine(@CurrentUser() user: IUser): Promise<IPost[]> {
     return await this.service.getMine(user);
+  }
+
+  @Get('/:id')
+  async getOne(@Param('id') id: string): Promise<IPost> {
+    return await this.service.getOne(id);
   }
 
   @Post()
@@ -58,5 +59,19 @@ export class PostController {
   @UseGuards(AuthGuard)
   async deleteOne(@Param('id') id: string, @CurrentUser() user: IUser) {
     return await this.service.deleteOne(id, user);
+  }
+
+  @Put('/:id')
+  @ApiSecurity('bearer')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FilesInterceptor('images', 10))
+  @ApiConsumes('multipart/form-data')
+  async updatePost(
+    @Param('id') id: string,
+    @Body() data: UpdatePostDto,
+    @CurrentUser() user: IUser,
+    @UploadedFiles() images: Express.Multer.File[],
+  ) {
+    return await this.service.updatePost(id, user, data, images);
   }
 }
