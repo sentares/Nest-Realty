@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
@@ -47,19 +48,30 @@ export class PostService {
     user: IUser,
     images: Express.Multer.File[],
   ): Promise<IPost> {
-    const { title, typeId, categoryId, price } = data;
+    const { title, typeId, categoryId, price, bedrooms, bathrooms } = data;
     const type = await this.typeService.getOne(typeId);
     const category = await this.categoryService.getOne(categoryId);
     const imagePaths = images.map((image) => image.filename);
 
-    const newPost = new this.postModel({
+    const newPost: IPost = new this.postModel({
       title: title || type.title,
       type,
       price: Number(price),
+      bedrooms: Number(bedrooms),
+      bathrooms: Number(bathrooms),
       category,
       user,
       images: imagePaths,
     });
+
+    if (
+      newPost.price < 10 ||
+      newPost.bedrooms < 1 ||
+      images.length < 2 ||
+      newPost.bathrooms < 1
+    ) {
+      throw new BadRequestException('Invalid post data');
+    }
 
     await newPost.save();
 

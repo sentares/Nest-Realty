@@ -21,6 +21,12 @@ export class PostDto implements IPost {
   @ApiProperty({ example: 100000 })
   price: number;
 
+  @ApiProperty({ example: 1 })
+  bedrooms: number;
+
+  @ApiProperty({ example: 1 })
+  bathrooms: number;
+
   @ApiProperty({ example: '64c3eeb87984df7cca567311' })
   id_user: string;
 

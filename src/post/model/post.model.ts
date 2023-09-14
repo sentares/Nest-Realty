@@ -16,6 +16,12 @@ export class PostModel implements IPost {
   @Prop()
   price: number;
 
+  @Prop()
+  bedrooms: number;
+
+  @Prop()
+  bathrooms: number;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'TypeModel' })
   type: TypeModel;
 

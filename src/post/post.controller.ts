@@ -49,7 +49,7 @@ export class PostController {
     @Body() data: CreatePostDto,
     @CurrentUser() user: IUser,
     @UploadedFiles() images: Express.Multer.File[],
-  ): Promise<IPost> {
+  ) {
     return await this.service.create(data, user, images);
   }
 

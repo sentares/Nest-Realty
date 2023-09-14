@@ -7,6 +7,8 @@ export interface IPost {
   type: IType;
   category: ICategory;
   price: number;
+  bedrooms: number;
+  bathrooms: number;
   images?: string[];
 
   save?();
