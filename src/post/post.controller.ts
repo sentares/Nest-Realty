@@ -1,10 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
-  UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -50,19 +50,13 @@ export class PostController {
     @CurrentUser() user: IUser,
     @UploadedFiles() images: Express.Multer.File[],
   ): Promise<IPost> {
-    console.log(images, 'images');
-
-    // console.log(data, 'from controller');
-
-    return await this.service.create(data, user);
+    return await this.service.create(data, user, images);
   }
 
-  // @Post('post')
-  // @UseInterceptors(FilesInterceptor('images', 10))
-  // async uploadFiles(@UploadedFiles() images: Express.Multer.File[]) {
-  //   // images - это массив файлов
-  //   console.log(images);
-
-  //   // return await this.service.postImages(images);
-  // }
+  @Delete('/:id')
+  @ApiSecurity('bearer')
+  @UseGuards(AuthGuard)
+  async deleteOne(@Param('id') id: string, @CurrentUser() user: IUser) {
+    return await this.service.deleteOne(id, user);
+  }
 }

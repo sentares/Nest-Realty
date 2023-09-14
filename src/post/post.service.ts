@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CategoryService } from 'src/category/category.service';
@@ -16,8 +21,6 @@ export class PostService {
     private readonly typeService: TypeService,
     private readonly categoryService: CategoryService,
   ) {}
-
-  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NTAwNjU0MmNlOTQ5NGQxMjFhOTgyZGIiLCJpYXQiOjE2OTQ1NDAzMTY4OTEsImV4cCI6MTY5NDU2OTExNjg5MX0.b4xxBbnJx4I3uUJNd5FF25kNkmrOxU7MMUPLw4FvAqA
 
   async getAll(): Promise<IPost[]> {
     return await this.postModel.find().populate('type').populate('category');
@@ -38,34 +41,45 @@ export class PostService {
       .populate('category');
   }
 
-  async create(data: CreatePostDto, user: IUser): Promise<IPost> {
-    const { title, typeId, categoryId, price, images } = data;
+  async create(
+    data: CreatePostDto,
+    user: IUser,
+    images: Express.Multer.File[],
+  ): Promise<IPost> {
+    const { title, typeId, categoryId, price } = data;
     const type = await this.typeService.getOne(typeId);
     const category = await this.categoryService.getOne(categoryId);
-    console.log(data, 'from service');
+    const imagePaths = images.map((image) => image.filename);
 
     const newPost = new this.postModel({
       title: title || type.title,
       type,
-      price,
+      price: Number(price),
       category,
       user,
+      images: imagePaths,
     });
 
-    const createdPost = await newPost.save();
+    await newPost.save();
 
-    // const postId = createdPost.id;
-    // const uploadPath = `./images/${postId}`;
-
-    createdPost.images = images;
-    await createdPost.save();
-
-    return createdPost;
+    return newPost;
   }
 
-  async postImage(image: Express.Multer.File) {
-    console.log(image);
+  async deleteOne(id: string, user: IUser) {
+    const post = await this.postModel.findById(id);
 
-    return image;
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (user._id.toString() === post.user.toString()) {
+      await post.deleteOne();
+      Logger.log('Post deleted', PostService.name);
+      return 'Post deleted successfully';
+    } else {
+      throw new UnauthorizedException(
+        'You do not have permission to delete this post',
+      );
+    }
   }
 }
